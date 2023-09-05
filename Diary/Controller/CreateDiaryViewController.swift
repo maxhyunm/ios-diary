@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CreateDiaryViewController: UIViewController {
+final class CreateDiaryViewController: UIViewController, AlertDisplayable {
     private let textView: UITextView = {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -17,8 +17,7 @@ final class CreateDiaryViewController: UIViewController {
     }()
     
     weak var delegate: DiaryListDelegate?
-    private let container = CoreDataManager.shared.persistentContainer
-    var diary: Diary?
+    var diaryToEdit: Diary?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +35,18 @@ final class CreateDiaryViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .systemBackground
         self.title = DateFormatter().formatToString(from: Date(), with: "YYYY년 MM월 dd일")
+        
+        if let diaryEdit = diaryToEdit {
+            textView.text = "\(diaryEdit.title ?? "")\n\(diaryEdit.body ?? "")"
+        }
+        
+        setupTextViewLayout()
+        
+        let moreButton = UIBarButtonItem(title: "더보기", style: .plain, target: self, action: #selector(showMoreOptions))
+        navigationItem.rightBarButtonItem = moreButton
+    }
+    
+    private func setupTextViewLayout() {
         view.addSubview(textView)
         
         NSLayoutConstraint.activate([
@@ -60,6 +71,52 @@ final class CreateDiaryViewController: UIViewController {
         )
     }
     
+    private func showShareActivity() {
+        let textToShare = "일기 내용을 여기에 넣으세요."
+        let activityViewController = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
+
+        present(activityViewController, animated: true, completion: nil)
+    }
+    
+    private func showDeleteConfirmation() {
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+            self?.performDelete()
+        }
+        
+        showAlert(title: "진짜요?", message: "정말로 삭제하시겠습니까?", actions: [cancelAction, deleteAction])
+    }
+    
+    private func createDiary() {
+        if diaryToEdit == nil {
+            diaryToEdit = CoreDataManager.shared.createDiary()
+        }
+    }
+    
+    private func saveDiary() {
+        guard let diary = diaryToEdit else { return }
+    
+        CoreDataManager.shared.saveDiary(diary, textView.text)
+    }
+    
+    private func deleteDiary(_ diary: Diary?) {
+        if let diary = diary {
+            CoreDataManager.shared.deleteDiary(diary)
+        }
+    }
+    
+    private func performDelete() {
+       deleteDiary(diaryToEdit)
+        navigationController?.popViewController(animated: true)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+}
+
+// MARK: @objc Code
+extension CreateDiaryViewController {
     @objc private func keyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey]
                 as? CGRect else { return }
@@ -72,30 +129,22 @@ final class CreateDiaryViewController: UIViewController {
         saveDiary()
     }
     
-    private func createDiary() {
-        let newDiary = Diary(context: container.viewContext)
-        newDiary.id = UUID()
-        newDiary.createdAt = Date()
-        
-        diary = newDiary
-    }
-    
-    private func saveDiary() {
-        let contents = textView.text.split(separator: "\n")
-        guard !contents.isEmpty,
-              let title = contents.first else { return }
-        
-        let body = contents.dropFirst().joined(separator: "\n")
-        
-        guard let diary else { return }
-        
-        diary.title = "\(title)"
-        diary.body = body
-        
-        CoreDataManager.shared.saveContext()
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+    @objc private func showMoreOptions() {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        let shareAction = UIAlertAction(title: "Shared", style: .default) { [weak self] _ in
+            self?.showShareActivity()
+        }
+        alertController.addAction(shareAction)
+
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+            self?.showDeleteConfirmation()
+        }
+        alertController.addAction(deleteAction)
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true, completion: nil)
     }
 }

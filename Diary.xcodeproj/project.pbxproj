@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		459D493A878338290A3E0AEF /* Pods_Diary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDF8EB908CAD9D062C72898B /* Pods_Diary.framework */; };
+		636B19A82AA6030100B5242D /* AlertDisplayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636B19A72AA6030100B5242D /* AlertDisplayable.swift */; };
 		63BB62822A9F109400524DCB /* DecodingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BB62812A9F109400524DCB /* DecodingManager.swift */; };
 		63BB62B22AA181BE00524DCB /* Diary+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BB62B02AA181BE00524DCB /* Diary+CoreDataClass.swift */; };
 		63BB62B32AA181BE00524DCB /* Diary+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BB62B12AA181BE00524DCB /* Diary+CoreDataProperties.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		636B19A72AA6030100B5242D /* AlertDisplayable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDisplayable.swift; sourceTree = "<group>"; };
 		63BB62812A9F109400524DCB /* DecodingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodingManager.swift; sourceTree = "<group>"; };
 		63BB62B02AA181BE00524DCB /* Diary+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Diary+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		63BB62B12AA181BE00524DCB /* Diary+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Diary+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
@@ -77,6 +79,14 @@
 				EDF8EB908CAD9D062C72898B /* Pods_Diary.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		636B19A62AA602C500B5242D /* protocol */ = {
+			isa = PBXGroup;
+			children = (
+				636B19A72AA6030100B5242D /* AlertDisplayable.swift */,
+			);
+			path = protocol;
 			sourceTree = "<group>";
 		};
 		63BB62B62AA185E700524DCB /* DataManager */ = {
@@ -163,6 +173,7 @@
 		C739AE23284DF28600741E8F /* Diary */ = {
 			isa = PBXGroup;
 			children = (
+				636B19A62AA602C500B5242D /* protocol */,
 				63BB62B62AA185E700524DCB /* DataManager */,
 				63E5273E2A9ECD800000FBA6 /* Extension */,
 				63E5273D2A9ECD660000FBA6 /* Model */,
@@ -302,6 +313,7 @@
 				C739AE2F284DF28600741E8F /* Diary.xcdatamodeld in Sources */,
 				63BB62B52AA182AA00524DCB /* CoreDataManager.swift in Sources */,
 				63E527392A9D97160000FBA6 /* CreateDiaryViewController.swift in Sources */,
+				636B19A82AA6030100B5242D /* AlertDisplayable.swift in Sources */,
 				BABBDAE52A9F13A200D8D50B /* DecodingError.swift in Sources */,
 				63BB62B32AA181BE00524DCB /* Diary+CoreDataProperties.swift in Sources */,
 				BA1A55EB2A9D84AF0012C89D /* DiaryEntity.swift in Sources */,
