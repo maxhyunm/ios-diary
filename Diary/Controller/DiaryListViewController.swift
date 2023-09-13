@@ -5,6 +5,7 @@
 //  Last modified by Maxhyunm, Hamg.
 
 import UIKit
+import CoreLocation
 
 final class DiaryListViewController: UIViewController {
     private let tableView: UITableView = {
@@ -17,6 +18,7 @@ final class DiaryListViewController: UIViewController {
     private let dateFormatter = DateFormatter()
     private let container = CoreDataManager.shared.persistentContainer
     private var diaryList = [Diary]()
+    let locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +26,7 @@ final class DiaryListViewController: UIViewController {
         configureUI()
         setupNavigationBarButton()
         setupTableView()
+        fetchLocation()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -154,5 +157,26 @@ extension DiaryListViewController: UITableViewDelegate, ShareDisplayable {
         share.image = UIImage(systemName: "square.and.arrow.up")
         
         return UISwipeActionsConfiguration(actions: [delete, share])
+    }
+}
+
+extension DiaryListViewController: CLLocationManagerDelegate {
+    func fetchLocation() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            print("위치 업데이트!")
+            print("위도 : \(location.coordinate.latitude)")
+            print("경도 : \(location.coordinate.longitude)")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("위치 에러")
     }
 }
