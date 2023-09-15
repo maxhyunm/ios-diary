@@ -92,11 +92,23 @@
 <a id="4."></a></br>
 ## 💻 실행 화면
 
-| 새 일기 작성 | 일기 수정 | 일기 공유 | 일기 삭제 |
-|:--:|:--:|:--:|:--:|
-|<img src="https://hackmd.io/_uploads/rJ_15vbJ6.gif" width="200"/>|<img src="https://hackmd.io/_uploads/Bk_kqvbkT.gif" width="200"/>|<img src="https://hackmd.io/_uploads/H1d1qDWJT.gif" width="200"/>|<img src="https://hackmd.io/_uploads/B1_k5vZ1a.gif" width="200"/>|
+| 새 일기 작성 |
+|:--:|
+|<img src="https://hackmd.io/_uploads/rJ_15vbJ6.gif" width="200"/>|
 
 
+| 일기 수정 | 
+|:--:|
+|<img src="https://hackmd.io/_uploads/Bk_kqvbkT.gif" width="200"/>|
+
+| 일기 공유(리스트) | 일기 공유(더보기) |
+|:--:|:--:|
+|<img src="https://hackmd.io/_uploads/S1Q83w-ya.gif" width="200"/>|<img src="https://hackmd.io/_uploads/SyQL2vZkp.gif" width="200"/>
+
+
+| 일기 삭제(리스트) | 일기 삭제(더보기) |
+|:--:|:--:|
+|<img src="https://hackmd.io/_uploads/rkXU3wWJa.gif" width="200"/>|<img src="https://hackmd.io/_uploads/rJXL2DZka.gif" width="200"/>|
 </br>
 
 <a id="5."></a></br>
