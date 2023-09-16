@@ -75,6 +75,30 @@ final class DiaryDetailViewController: UIViewController, AlertDisplayable, Share
         }
         
         textView.text = "\(title)\n\(body)"
+        setupFontStyle(title: title, body: body)
+    }
+    
+    private func splitTitleAndBody() -> (title: String, body: String) {
+        let contents = textView.text.components(separatedBy: "\n")
+        guard !contents.isEmpty,
+              let title = contents.first else {
+            return (title: "", body: "")
+        }
+        
+        let body = contents.dropFirst().joined(separator: "\n")
+        
+        return (title: title, body: body)
+    }
+    
+    private func setupFontStyle(title: String, body: String) {
+        let attributeString = NSMutableAttributedString(string: textView.text)
+        attributeString.addAttribute(.font,
+                                     value: UIFont.preferredFont(forTextStyle: .title1),
+                                     range: (textView.text as NSString).range(of: title))
+        attributeString.addAttribute(.font,
+                                     value: UIFont.preferredFont(forTextStyle: .body),
+                                     range: (textView.text as NSString).range(of: body))
+        textView.attributedText = attributeString
     }
     
     private func setupNavigationBarButton() {
@@ -190,14 +214,12 @@ extension DiaryDetailViewController: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        let contents = textView.text.components(separatedBy: "\n")
-        guard !contents.isEmpty,
-              let title = contents.first else { return }
+        let splitText = splitTitleAndBody()
         
-        let body = contents.dropFirst().joined(separator: "\n")
+        diary.title = splitText.title
+        diary.body = splitText.body
         
-        diary.title = "\(title)"
-        diary.body = body
+        setupFontStyle(title: splitText.title, body: splitText.body)
     }
 }
 

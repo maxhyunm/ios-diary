@@ -9,10 +9,36 @@ import CoreData
 
 class CoreDataManager {
     static let shared = CoreDataManager()
+    
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "Diary")
+        container.loadPersistentStores(completionHandler: { (_, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        return container
+    }()
+    
     private init() {}
         
     func fetchDiary() throws -> [Diary] {
         let request: NSFetchRequest<Diary> = Diary.fetchRequest()
+        let sortByDate = NSSortDescriptor(key: "createdAt", ascending: false)
+        request.sortDescriptors = [sortByDate]
+        
+        do {
+            let diaries = try persistentContainer.viewContext.fetch(request)
+            return diaries
+        } catch {
+            throw CoreDataError.dataNotFound
+        }
+    }
+    
+    func filterDiary(_ keyword: String) throws -> [Diary] {
+        let request: NSFetchRequest<Diary> = Diary.fetchRequest()
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@ OR body CONTAINS[cd] %@", keyword, keyword)
+        request.predicate = predicate
         let sortByDate = NSSortDescriptor(key: "createdAt", ascending: false)
         request.sortDescriptors = [sortByDate]
         
@@ -39,16 +65,6 @@ class CoreDataManager {
         persistentContainer.viewContext.delete(diary)
         try saveContext()
     }
-    
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "Diary")
-        container.loadPersistentStores(completionHandler: { (_, error) in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-        return container
-    }()
 
     func saveContext () throws {
         let context = persistentContainer.viewContext

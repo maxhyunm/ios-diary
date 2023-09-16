@@ -12,7 +12,10 @@ final class DiaryListTableViewCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.adjustsFontForContentSizeCategory = true
         label.font = .preferredFont(forTextStyle: .body)
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentHuggingPriority(.required, for: .vertical)
         
         return label
     }()
@@ -20,9 +23,12 @@ final class DiaryListTableViewCell: UITableViewCell {
     private let dateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.adjustsFontForContentSizeCategory = true
         label.font = .preferredFont(forTextStyle: .callout)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentHuggingPriority(.required, for: .vertical)
         
         return label
     }()
@@ -30,8 +36,11 @@ final class DiaryListTableViewCell: UITableViewCell {
     private let bodyLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.adjustsFontForContentSizeCategory = true
         label.font = .preferredFont(forTextStyle: .caption2)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentHuggingPriority(.required, for: .vertical)
         
         return label
     }()
@@ -41,6 +50,8 @@ final class DiaryListTableViewCell: UITableViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         imageView.setContentHuggingPriority(.required, for: .horizontal)
+        imageView.setContentCompressionResistancePriority(.required, for: .vertical)
+        imageView.setContentHuggingPriority(.required, for: .vertical)
         
         return imageView
     }()
@@ -70,23 +81,21 @@ final class DiaryListTableViewCell: UITableViewCell {
         accessoryType = .disclosureIndicator
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
             
             dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
+            dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             
-            weatherIconImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             weatherIconImageView.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: 15),
             weatherIconImageView.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
-            weatherIconImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.05),
-            weatherIconImageView.heightAnchor.constraint(equalTo: weatherIconImageView.widthAnchor),
+            weatherIconImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.3),
+            weatherIconImageView.widthAnchor.constraint(equalTo: weatherIconImageView.heightAnchor),
             
-            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             bodyLabel.leadingAnchor.constraint(equalTo: weatherIconImageView.trailingAnchor, constant: 15),
-            bodyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40),
+            bodyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
             bodyLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor)
         ])
     }

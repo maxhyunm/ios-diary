@@ -12,6 +12,7 @@ final class DiaryListViewController: UIViewController {
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.separatorStyle = .singleLine
         
         return tableView
     }()
@@ -113,6 +114,13 @@ extension DiaryListViewController: UITableViewDataSource {
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let searchBar = UISearchBar()
+        searchBar.delegate = self
+        
+        return searchBar
+    }
 }
 
 extension DiaryListViewController: UITableViewDelegate, ShareDisplayable {
@@ -181,5 +189,39 @@ extension DiaryListViewController: CLLocationManagerDelegate {
         
         latitude = location.latitude
         longitude = location.longitude
+        
+        locationManager.stopUpdatingLocation()
+    }
+}
+
+extension DiaryListViewController: UISearchBarDelegate {
+    func searchDiary(with keyword: String) {
+        if keyword.count > 0 {
+            do {
+                let fetchedDiaries = try CoreDataManager.shared.filterDiary(keyword)
+                diaryList = fetchedDiaries.filter { $0.title != nil }
+                tableView.reloadData()
+            } catch CoreDataError.dataNotFound {
+                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
+                showAlert(title: CoreDataError.dataNotFound.alertTitle,
+                          message: CoreDataError.dataNotFound.message,
+                          actions: [cancelAction],
+                          preferredStyle: .alert)
+            } catch {
+                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
+                showAlert(title: CoreDataError.dataNotFound.alertTitle,
+                          message: CoreDataError.unknown.message,
+                          actions: [cancelAction],
+                          preferredStyle: .alert)
+            }
+        }
+        
+        if keyword.count == 0 {
+            readCoreData()
+        }
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchDiary(with: searchText)
     }
 }
