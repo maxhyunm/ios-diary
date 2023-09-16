@@ -19,8 +19,11 @@ extension ShareDisplayable where Self: UIViewController {
               let body = diary.body else {
             return
         }
-
-        let date = DateFormatter().formatToString(from: createdAt, with: "YYYY년 MM월 dd일")
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .none
+        let date = dateFormatter.string(from: createdAt)
         let shareText = """
                         제목: \(title)
                         작성일자: \(date)

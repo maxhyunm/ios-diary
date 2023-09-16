@@ -17,7 +17,14 @@ final class DiaryListViewController: UIViewController {
         return tableView
     }()
     
-    private let dateFormatter = DateFormatter()
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        
+        return formatter
+    }()
+
     private let container = CoreDataManager.shared.persistentContainer
     private var diaryList = [Diary]()
     
@@ -41,7 +48,7 @@ final class DiaryListViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .systemBackground
-        self.title = "일기장"
+        self.title = NSLocalizedString("titleLabel", comment: "")
         
         view.addSubview(tableView)
         
@@ -108,8 +115,7 @@ extension DiaryListViewController: UITableViewDataSource {
               let body = diaryEntity.body?.split(separator: "\n").joined(separator: "\n") else {
             return UITableViewCell()
         }
-        let date = dateFormatter.formatToString(from: createdAt, with: "YYYY년 MM월 dd일")
-        
+        let date = dateFormatter.string(from: createdAt)
         cell.setModel(title: title, date: date, body: body, icon: diaryEntity.weatherIcon)
         
         return cell

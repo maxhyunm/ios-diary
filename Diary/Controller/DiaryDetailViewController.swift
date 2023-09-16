@@ -52,7 +52,11 @@ final class DiaryDetailViewController: UIViewController, AlertDisplayable, Share
     
     private func configureUI() {
         view.backgroundColor = .systemBackground
-        self.title = DateFormatter().formatToString(from: Date(), with: "YYYY년 MM월 dd일")
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .none
+        self.title = dateFormatter.string(from: diary.createdAt ?? Date())
         view.addSubview(textView)
         textView.delegate = self
         
@@ -102,7 +106,7 @@ final class DiaryDetailViewController: UIViewController, AlertDisplayable, Share
     }
     
     private func setupNavigationBarButton() {
-        let moreButton = UIBarButtonItem(title: ButtonNamespace.more,
+        let moreButton = UIBarButtonItem(title: NSLocalizedString("moreOptions", comment: ""),
                                          style: .plain,
                                          target: self,
                                          action: #selector(showMoreOptions))
@@ -124,20 +128,22 @@ final class DiaryDetailViewController: UIViewController, AlertDisplayable, Share
     }
     
     private func showDeleteAlert() {
-        let cancelAction = UIAlertAction(title: ButtonNamespace.cancel, style: .cancel)
-        let deleteAction = UIAlertAction(title: ButtonNamespace.delete, style: .destructive) { [weak self] _ in
+        let cancelAction = UIAlertAction(title: NSLocalizedString("cancelOption", comment: ""),
+                                         style: .cancel)
+        let deleteAction = UIAlertAction(title: NSLocalizedString("deleteOption", comment: ""),
+                                         style: .destructive) { [weak self] _ in
             guard let self else { return }
             do {
                 try CoreDataManager.shared.deleteDiary(self.diary)
                 self.navigationController?.popViewController(animated: true)
             } catch CoreDataError.deleteFailure {
-                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
+                let cancelAction = UIAlertAction(title: NSLocalizedString("confirm", comment: ""), style: .cancel)
                 self.showAlert(title: CoreDataError.deleteFailure.alertTitle,
                                message: CoreDataError.deleteFailure.message,
                                actions: [cancelAction],
                                preferredStyle: .alert)
             } catch {
-                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
+                let cancelAction = UIAlertAction(title: NSLocalizedString("confirm", comment: ""), style: .cancel)
                 self.showAlert(title: CoreDataError.deleteFailure.alertTitle,
                                message: CoreDataError.unknown.message,
                                actions: [cancelAction],
@@ -167,17 +173,20 @@ extension DiaryDetailViewController {
     @objc private func showMoreOptions() {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        let deleteAction = UIAlertAction(title: ButtonNamespace.deleteEnglish, style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: NSLocalizedString("deleteOption", comment: ""),
+                                         style: .destructive) { [weak self] _ in
             guard let self else { return }
             self.showDeleteAlert()
         }
         
-        let shareAction = UIAlertAction(title: ButtonNamespace.shareEnglish, style: .default) { [weak self] _ in
+        let shareAction = UIAlertAction(title: NSLocalizedString("shareOption", comment: ""),
+                                        style: .default) { [weak self] _ in
             guard let self else { return }
             self.shareDiary(self.diary)
         }
         
-        let cancelAction = UIAlertAction(title: ButtonNamespace.cancelEnglish, style: .cancel)
+        let cancelAction = UIAlertAction(title: NSLocalizedString("cancelOption", comment: ""),
+                                         style: .cancel)
         
         alertController.addAction(shareAction)
         alertController.addAction(deleteAction)
@@ -199,13 +208,13 @@ extension DiaryDetailViewController: UITextViewDelegate {
         do {
             try CoreDataManager.shared.saveContext()
         } catch CoreDataError.saveFailure {
-            let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
+            let cancelAction = UIAlertAction(title: NSLocalizedString("confirm", comment: ""), style: .cancel)
             self.showAlert(title: CoreDataError.saveFailure.alertTitle,
                            message: CoreDataError.saveFailure.message,
                            actions: [cancelAction],
                            preferredStyle: .alert)
         } catch {
-            let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
+            let cancelAction = UIAlertAction(title: NSLocalizedString("confirm", comment: ""), style: .cancel)
             self.showAlert(title: CoreDataError.saveFailure.alertTitle,
                            message: CoreDataError.unknown.message,
                            actions: [cancelAction],
@@ -244,7 +253,8 @@ extension DiaryDetailViewController {
                     self.diary.weatherIcon = weatherIcon
                 } catch {
                     DispatchQueue.main.async {
-                        let confirmAction = UIAlertAction(title: ButtonNamespace.confirm, style: .default)
+                        let confirmAction = UIAlertAction(title: NSLocalizedString("confirm", comment: ""),
+                                                          style: .default)
                         self.showAlert(title: AlertNamespace.networkErrorTitle,
                                   message: nil,
                                   actions: [confirmAction],
@@ -253,7 +263,8 @@ extension DiaryDetailViewController {
                 }
             case .failure:
                 DispatchQueue.main.async {
-                    let confirmAction = UIAlertAction(title: ButtonNamespace.confirm, style: .default)
+                    let confirmAction = UIAlertAction(title: NSLocalizedString("confirm", comment: ""),
+                                                      style: .default)
                     self.showAlert(title: AlertNamespace.networkErrorTitle,
                               message: nil,
                               actions: [confirmAction],
