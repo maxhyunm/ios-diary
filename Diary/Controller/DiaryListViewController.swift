@@ -25,7 +25,7 @@ final class DiaryListViewController: UIViewController {
         return formatter
     }()
 
-    private let container = CoreDataManager.shared.persistentContainer
+    var coreDataManager: CoreDataManager?
     private var diaryList = [Diary]()
     
     private var latitude: Double?
@@ -62,8 +62,10 @@ final class DiaryListViewController: UIViewController {
     
     private func setupNavigationBarButton() {
         let addDiary = UIAction(image: UIImage(systemName: "plus")) { [weak self] _ in
-            guard let self else { return }
-            let createDiaryView = DiaryDetailViewController(latitude: self.latitude, longitude: self.longitude)
+            guard let self, let coreDataManager else { return }
+            let createDiaryView = DiaryDetailViewController(latitude: self.latitude,
+                                                            longitude: self.longitude,
+                                                            coreDataManager: coreDataManager)
             self.navigationController?.pushViewController(createDiaryView, animated: true)
         }
         
@@ -77,8 +79,13 @@ final class DiaryListViewController: UIViewController {
     }
 
     private func readCoreData() {
+        guard let coreDataManager else { return }
+        
         do {
-            let fetchedDiaries = try CoreDataManager.shared.fetchDiary()
+            guard let fetchedDiaries = try coreDataManager.fetchEntity(sortBy: "createdAt") as? [Diary] else {
+                throw CoreDataError.unknown
+            }
+            
             diaryList = fetchedDiaries.filter { $0.title != nil }
             tableView.reloadData()
         } catch CoreDataError.dataNotFound {
@@ -129,17 +136,22 @@ extension DiaryListViewController: UITableViewDelegate, ShareDisplayable {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let diaryToEdit = diaryList[indexPath.row]
-        let createVC = DiaryDetailViewController(diaryToEdit)
+        
+        guard let coreDataManager else { return }
+        
+        let createVC = DiaryDetailViewController(diaryToEdit, coreDataManager: coreDataManager)
         
         navigationController?.pushViewController(createVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) ->
     UISwipeActionsConfiguration? {
+        guard let coreDataManager else { return nil }
+        
         let delete = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
             let selectedDiary = self.diaryList[indexPath.row]
             do {
-                try CoreDataManager.shared.deleteDiary(selectedDiary)
+                try coreDataManager.deleteEntity(selectedDiary)
                 self.readCoreData()
                 success(true)
             } catch CoreDataError.deleteFailure {
@@ -196,9 +208,17 @@ extension DiaryListViewController: CLLocationManagerDelegate {
 
 extension DiaryListViewController: UISearchBarDelegate {
     func searchDiary(with keyword: String) {
+        guard let coreDataManager else { return }
+        
         if keyword.count > 0 {
             do {
-                let fetchedDiaries = try CoreDataManager.shared.filterDiary(keyword)
+                let predicate = "title CONTAINS[cd] %@ OR body CONTAINS[cd] %@"
+                guard let fetchedDiaries = try coreDataManager.filterEntity(keyword,
+                                                                            predicate: predicate,
+                                                                            sortBy: "createdAt") as? [Diary] else {
+                    throw CoreDataError.unknown
+                }
+                
                 diaryList = fetchedDiaries.filter { $0.title != nil }
                 tableView.reloadData()
             } catch CoreDataError.dataNotFound {

@@ -16,14 +16,15 @@ final class DiaryDetailViewController: UIViewController, ShareDisplayable {
         return textView
     }()
     
-    private let container = CoreDataManager.shared.persistentContainer
+    private let coreDataManager: CoreDataManager
     private var diary: Diary
     private var isNew: Bool
     private var latitude: Double?
     private var longitude: Double?
     
-    init(latitude: Double?, longitude: Double?) {
-        self.diary = CoreDataManager.shared.createDiary()
+    init(latitude: Double?, longitude: Double?, coreDataManager: CoreDataManager) {
+        self.coreDataManager = coreDataManager
+        self.diary = coreDataManager.createDiary()
         self.isNew = true
         self.latitude = latitude
         self.longitude = longitude
@@ -32,9 +33,11 @@ final class DiaryDetailViewController: UIViewController, ShareDisplayable {
         fetchWeather()
     }
     
-    init(_ diary: Diary) {
+    init(_ diary: Diary, coreDataManager: CoreDataManager) {
+        self.coreDataManager = coreDataManager
         self.diary = diary
         self.isNew = false
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -134,7 +137,7 @@ final class DiaryDetailViewController: UIViewController, ShareDisplayable {
         alertBuilder.addAction(.delete) { [weak self] _ in
             guard let self else { return }
             do {
-                try CoreDataManager.shared.deleteDiary(self.diary)
+                try coreDataManager.deleteEntity(self.diary)
                 self.navigationController?.popViewController(animated: true)
             } catch CoreDataError.deleteFailure {
                 let additionalAlertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
@@ -191,7 +194,7 @@ extension DiaryDetailViewController: UITextViewDelegate {
         guard !contents.isEmpty else { return }
         
         do {
-            try CoreDataManager.shared.saveContext()
+            try coreDataManager.saveContext()
         } catch CoreDataError.saveFailure {
             let alertBulder = AlertBuilder(viewController: self, prefferedStyle: .alert)
             alertBulder.setType(.coreDataError(error: .saveFailure))

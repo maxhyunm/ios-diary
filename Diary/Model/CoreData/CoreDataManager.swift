@@ -8,43 +8,50 @@
 import CoreData
 
 class CoreDataManager {
-    static let shared = CoreDataManager()
+    var persistentContainer: NSPersistentContainer
     
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "Diary")
-        container.loadPersistentStores(completionHandler: { (_, error) in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-        return container
-    }()
-    
-    private init() {}
+    init(entityName: String) {
+        persistentContainer = {
+            let container = NSPersistentContainer(name: entityName)
+            container.loadPersistentStores(completionHandler: { (_, error) in
+                if let error = error as NSError? {
+                    fatalError("Unresolved error \(error), \(error.userInfo)")
+                }
+            })
+            return container
+        }()
+    }
         
-    func fetchDiary() throws -> [Diary] {
-        let request: NSFetchRequest<Diary> = Diary.fetchRequest()
-        let sortByDate = NSSortDescriptor(key: "createdAt", ascending: false)
-        request.sortDescriptors = [sortByDate]
+    func fetchEntity<T: NSManagedObject>(sortBy: String? = nil) throws -> [T] {
+        let request: NSFetchRequest<T> = NSFetchRequest(entityName: persistentContainer.name)
         
+        if let sortBy {
+            let sorted = NSSortDescriptor(key: sortBy, ascending: false)
+            request.sortDescriptors = [sorted]
+        }
+
         do {
-            let diaries = try persistentContainer.viewContext.fetch(request)
-            return diaries
+            let entities: [T] = try persistentContainer.viewContext.fetch(request)
+            return entities
         } catch {
             throw CoreDataError.dataNotFound
         }
     }
     
-    func filterDiary(_ keyword: String) throws -> [Diary] {
-        let request: NSFetchRequest<Diary> = Diary.fetchRequest()
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@ OR body CONTAINS[cd] %@", keyword, keyword)
-        request.predicate = predicate
-        let sortByDate = NSSortDescriptor(key: "createdAt", ascending: false)
-        request.sortDescriptors = [sortByDate]
+    func filterEntity<T: NSManagedObject>(_ keyword: String, predicate: String, sortBy: String? = nil) throws -> [T] {
+        let request: NSFetchRequest<T> = NSFetchRequest(entityName: persistentContainer.name)
+        
+        let predicated = NSPredicate(format: predicate, keyword, keyword)
+        request.predicate = predicated
+        
+        if let sortBy {
+            let sorted = NSSortDescriptor(key: sortBy, ascending: false)
+            request.sortDescriptors = [sorted]
+        }
         
         do {
-            let diaries = try persistentContainer.viewContext.fetch(request)
-            return diaries
+            let entities = try persistentContainer.viewContext.fetch(request)
+            return entities
         } catch {
             throw CoreDataError.dataNotFound
         }
@@ -58,15 +65,15 @@ class CoreDataManager {
         return newDiary
     }
     
-    func deleteDiary(_ diary: Diary?) throws {
-        guard let diary = diary else {
+    func deleteEntity<T: NSManagedObject>(_ entity: T?) throws {
+        guard let entity else {
             throw CoreDataError.deleteFailure
         }
-        persistentContainer.viewContext.delete(diary)
+        persistentContainer.viewContext.delete(entity)
         try saveContext()
     }
 
-    func saveContext () throws {
+    func saveContext() throws {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {

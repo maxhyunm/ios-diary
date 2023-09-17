@@ -9,13 +9,14 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    let coreDataManager = CoreDataManager(entityName: "Diary")
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
         let diaryListViewController = DiaryListViewController()
+        diaryListViewController.coreDataManager = coreDataManager
         let navigationController = UINavigationController(rootViewController: diaryListViewController)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
@@ -50,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Save changes in the application's managed object context when the application transitions to the background.
         do {
-            try CoreDataManager.shared.saveContext()
+            try coreDataManager.saveContext()
         } catch {
             fatalError(CoreDataError.saveFailure.message)
         }
