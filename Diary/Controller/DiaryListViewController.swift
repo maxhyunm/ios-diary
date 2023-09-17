@@ -75,9 +75,7 @@ final class DiaryListViewController: UIViewController {
         tableView.delegate = self
         tableView.register(DiaryListTableViewCell.self, forCellReuseIdentifier: DiaryListTableViewCell.identifier)
     }
-}
 
-extension DiaryListViewController: AlertDisplayable {
     private func readCoreData() {
         do {
             let fetchedDiaries = try CoreDataManager.shared.fetchDiary()

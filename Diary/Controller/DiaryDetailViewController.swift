@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class DiaryDetailViewController: UIViewController, AlertDisplayable, ShareDisplayable {
+final class DiaryDetailViewController: UIViewController, ShareDisplayable {
     private let textView: UITextView = {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
