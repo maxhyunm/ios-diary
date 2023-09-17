@@ -5,6 +5,8 @@
 //  Created by Max, Hemg on 2023/09/10.
 //
 
+import Foundation
+
 enum CoreDataError: Error {
     case dataNotFound
     case saveFailure
@@ -14,26 +16,26 @@ enum CoreDataError: Error {
     var alertTitle: String {
         switch self {
         case .dataNotFound:
-            return "로드 실패"
+            return NSLocalizedString("dataNotFoundTitle", comment: "")
         case .saveFailure:
-            return "저장 실패"
+            return NSLocalizedString("saveFailureTitle", comment: "")
         case .deleteFailure:
-            return "삭제 실패"
+            return NSLocalizedString("deleteFailureTitle", comment: "")
         case .unknown:
-            return "오류"
+            return NSLocalizedString("unknownErrorTitle", comment: "")
         }
     }
 
     var message: String {
         switch self {
         case .dataNotFound:
-            return "데이터를 찾지 못했습니다."
+            return NSLocalizedString("dataNotFound", comment: "")
         case .saveFailure:
-            return "저장에 실패하였습니다."
+            return NSLocalizedString("saveFailure", comment: "")
         case .deleteFailure:
-            return "삭제에 실패하였습니다."
+            return NSLocalizedString("deleteFailure", comment: "")
         case .unknown:
-            return "알 수 없는 오류입니다."
+            return NSLocalizedString("unknownError", comment: "")
         }
     }
 }

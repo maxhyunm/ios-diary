@@ -5,6 +5,8 @@
 //  Created by Max, Hemg on 2023/08/30.
 //
 
+import Foundation
+
 enum DecodingError: Error {
     case fileNotFound
     case decodingFailure
@@ -13,11 +15,11 @@ enum DecodingError: Error {
     var message: String {
         switch self {
         case .fileNotFound:
-            return "파일을 불러오지 못했습니다."
+            return NSLocalizedString("fileNotFound", comment: "")
         case .decodingFailure:
-            return "파일을 변환하지 못했습니다."
+            return NSLocalizedString("decodingFailure", comment: "")
         case .unknown:
-            return "알 수 없는 오류입니다."
+            return NSLocalizedString("unknownError", comment: "")
         }
     }
 }

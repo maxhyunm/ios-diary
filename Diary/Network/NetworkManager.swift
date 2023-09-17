@@ -22,7 +22,7 @@ final class NetworkManager {
         
         dataTask = URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil {
-                completionHandler(.failure(.requestFail))
+                completionHandler(.failure(.requestFailure))
             }
             
             guard let httpResponse = response as? HTTPURLResponse, (200...299) ~= httpResponse.statusCode else {

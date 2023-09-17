@@ -84,17 +84,15 @@ extension DiaryListViewController: AlertDisplayable {
             diaryList = fetchedDiaries.filter { $0.title != nil }
             tableView.reloadData()
         } catch CoreDataError.dataNotFound {
-            let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
-            showAlert(title: CoreDataError.dataNotFound.alertTitle,
-                      message: CoreDataError.dataNotFound.message,
-                      actions: [cancelAction],
-                      preferredStyle: .alert)
+            let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
+            alertBuilder.setType(.coreDataError(error: .dataNotFound))
+            alertBuilder.addAction(.confirm)
+            alertBuilder.show()
         } catch {
-            let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
-            showAlert(title: CoreDataError.dataNotFound.alertTitle,
-                      message: CoreDataError.unknown.message,
-                      actions: [cancelAction],
-                      preferredStyle: .alert)
+            let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
+            alertBuilder.setType(.coreDataError(error: .unknown))
+            alertBuilder.addAction(.confirm)
+            alertBuilder.show()
         }
     }
 }
@@ -147,17 +145,15 @@ extension DiaryListViewController: UITableViewDelegate, ShareDisplayable {
                 self.readCoreData()
                 success(true)
             } catch CoreDataError.deleteFailure {
-                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
-                self.showAlert(title: CoreDataError.deleteFailure.alertTitle,
-                               message: CoreDataError.deleteFailure.message,
-                               actions: [cancelAction],
-                               preferredStyle: .alert)
+                let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
+                alertBuilder.setType(.coreDataError(error: .deleteFailure))
+                alertBuilder.addAction(.confirm)
+                alertBuilder.show()
             } catch {
-                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
-                self.showAlert(title: CoreDataError.deleteFailure.alertTitle,
-                               message: CoreDataError.unknown.message,
-                               actions: [cancelAction],
-                               preferredStyle: .alert)
+                let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
+                alertBuilder.setType(.coreDataError(error: .unknown))
+                alertBuilder.addAction(.confirm)
+                alertBuilder.show()
             }
         }
         
@@ -208,17 +204,15 @@ extension DiaryListViewController: UISearchBarDelegate {
                 diaryList = fetchedDiaries.filter { $0.title != nil }
                 tableView.reloadData()
             } catch CoreDataError.dataNotFound {
-                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
-                showAlert(title: CoreDataError.dataNotFound.alertTitle,
-                          message: CoreDataError.dataNotFound.message,
-                          actions: [cancelAction],
-                          preferredStyle: .alert)
+                let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
+                alertBuilder.setType(.coreDataError(error: .dataNotFound))
+                alertBuilder.addAction(.confirm)
+                alertBuilder.show()
             } catch {
-                let cancelAction = UIAlertAction(title: ButtonNamespace.confirm, style: .cancel)
-                showAlert(title: CoreDataError.dataNotFound.alertTitle,
-                          message: CoreDataError.unknown.message,
-                          actions: [cancelAction],
-                          preferredStyle: .alert)
+                let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
+                alertBuilder.setType(.coreDataError(error: .unknown))
+                alertBuilder.addAction(.confirm)
+                alertBuilder.show()
             }
         }
         
