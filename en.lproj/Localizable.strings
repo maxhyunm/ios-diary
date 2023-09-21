@@ -11,11 +11,15 @@
 "unknownErrorTitle" = "Unknown";
 "fileNotFound" = "File Not Found";
 "decodingFailure" = "Decoding Failure";
+"createFailureTitle" = "Error";
 "dataNotFoundTitle" = "Error";
 "saveFailureTitle" = "Error";
+"updateFailureTitle" = "Error";
 "deleteFailureTitle" = "Error";
+"createFailure" = "Create Failure";
 "dataNotFound" = "Data Not Found";
 "saveFailure" = "Save Failure";
+"updateFailure" = "Update Failure";
 "deleteFailure" = "Delete Failure";
 "invalidURL" = "Invalid URL";
 "requestFailure" = "Request Failure";

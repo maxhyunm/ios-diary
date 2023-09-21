@@ -25,7 +25,7 @@ final class DiaryListViewController: UIViewController {
         return formatter
     }()
 
-    var coreDataManager: CoreDataManager?
+    var diaryManager: DiaryManager<Diary>?
     private var diaryList = [Diary]()
     
     private var latitude: Double?
@@ -62,10 +62,10 @@ final class DiaryListViewController: UIViewController {
     
     private func setupNavigationBarButton() {
         let addDiary = UIAction(image: UIImage(systemName: "plus")) { [weak self] _ in
-            guard let self, let coreDataManager else { return }
+            guard let self, let diaryManager else { return }
             let createDiaryView = DiaryDetailViewController(latitude: self.latitude,
                                                             longitude: self.longitude,
-                                                            coreDataManager: coreDataManager)
+                                                            diaryManager: diaryManager)
             self.navigationController?.pushViewController(createDiaryView, animated: true)
         }
         
@@ -79,14 +79,10 @@ final class DiaryListViewController: UIViewController {
     }
 
     private func readCoreData() {
-        guard let coreDataManager else { return }
+        guard let diaryManager else { return }
         
         do {
-            guard let fetchedDiaries = try coreDataManager.fetchEntity(sortBy: "createdAt") as? [Diary] else {
-                throw CoreDataError.unknown
-            }
-            
-            diaryList = fetchedDiaries.filter { $0.title != nil }
+            diaryList = try diaryManager.fetchDiary()
             tableView.reloadData()
         } catch CoreDataError.dataNotFound {
             let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)
@@ -137,21 +133,21 @@ extension DiaryListViewController: UITableViewDelegate, ShareDisplayable {
         tableView.deselectRow(at: indexPath, animated: true)
         let diaryToEdit = diaryList[indexPath.row]
         
-        guard let coreDataManager else { return }
+        guard let diaryManager else { return }
         
-        let createVC = DiaryDetailViewController(diaryToEdit, coreDataManager: coreDataManager)
+        let createVC = DiaryDetailViewController(diaryToEdit, diaryManager: diaryManager)
         
         navigationController?.pushViewController(createVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) ->
     UISwipeActionsConfiguration? {
-        guard let coreDataManager else { return nil }
+        guard let diaryManager else { return nil }
         
         let delete = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
             let selectedDiary = self.diaryList[indexPath.row]
             do {
-                try coreDataManager.deleteEntity(selectedDiary)
+                try diaryManager.deleteData(selectedDiary)
                 self.readCoreData()
                 success(true)
             } catch CoreDataError.deleteFailure {
@@ -208,18 +204,11 @@ extension DiaryListViewController: CLLocationManagerDelegate {
 
 extension DiaryListViewController: UISearchBarDelegate {
     func searchDiary(with keyword: String) {
-        guard let coreDataManager else { return }
+        guard let diaryManager else { return }
         
         if keyword.count > 0 {
             do {
-                let predicate = "title CONTAINS[cd] %@ OR body CONTAINS[cd] %@"
-                guard let fetchedDiaries = try coreDataManager.filterEntity(keyword,
-                                                                            predicate: predicate,
-                                                                            sortBy: "createdAt") as? [Diary] else {
-                    throw CoreDataError.unknown
-                }
-                
-                diaryList = fetchedDiaries.filter { $0.title != nil }
+                diaryList = try diaryManager.filterDiary(keyword)
                 tableView.reloadData()
             } catch CoreDataError.dataNotFound {
                 let alertBuilder = AlertBuilder(viewController: self, prefferedStyle: .alert)

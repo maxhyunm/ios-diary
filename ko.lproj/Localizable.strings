@@ -11,11 +11,15 @@
 "unknownErrorTitle" = "알 수 없는 오류";
 "fileNotFound" = "파일을 불러오지 못했습니다.";
 "decodingFailure" = "파일을 변환하지 못했습니다.";
+"createFailureTitle" = "생성 실패";
 "dataNotFoundTitle" = "읽기 실패";
 "saveFailureTitle" = "저장 실패";
+"updateFailureTitle" = "수정 실패";
 "deleteFailureTitle" = "삭제 실패";
+"createFailure" = "데이터를 생성하지 못했습니다.";
 "dataNotFound" = "데이터를 찾지 못했습니다.";
 "saveFailure" = "저장에 실패하였습니다.";
+"updateFailure" = "수에 실패하였습니다.";
 "deleteFailure" = "삭제에 실패하였습니다.";
 "invalidURL" = "유효하지 않은 URL입니다.";
 "requestFailure" = "요청에 실패했습니다.";
