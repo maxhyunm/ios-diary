@@ -1,0 +1,9 @@
+disabled_rules:
+- trailing_whitespace
+
+excluded:
+- Pods
+- Diary/App/AppDelegate.swift
+- Diary/App/SceneDelegate.swift
+- Diary/Model/Diary+CoreDataClass.swift
+- Diary/Model/Diary+CoreDataProperties.swift
